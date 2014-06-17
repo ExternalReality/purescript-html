@@ -1,0 +1,28 @@
+{
+  "name": "purescript-html",
+  "homepage": "",
+  "authors": [
+    "Eric Jones <ejones@stackbuilders.com>"
+  ],
+  "description": "A Direct Port of the BlazeHTML API for Haskell by Jasper Van der Jeugt & Simon Meier",
+  "keywords": [
+    "purescript",
+    "blaze-html",
+    "html"
+  ],
+  "license": "BSD3",
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "node_modules",
+    "output",
+    "tests",
+    "tmp",
+    "bower.json",
+    "Gruntfile.js",
+    "package.json"
+  ],
+  "dependencies": {
+      "purescript-monoid"  :  "git://github.com/purescript/purescript-monoid.git"
+  }
+}
