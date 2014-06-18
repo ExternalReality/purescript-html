@@ -3,13 +3,6 @@ purescript-html
 
 A Direct Port of the BlazeHTML API for Haskell
 
-> In time it wants to be your best friend
-
-> Server-side love is living on the front-end
-
-> -- Red Hot Haskell Peppers
-
-
 ```haskell
 import Text.Html
 import Text.Html5
