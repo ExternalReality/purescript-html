@@ -55,7 +55,7 @@ instance monadMarkupM :: Monad MarkupM
 
 data Tag = Tag { unTag :: String }
 
-data Attribute = Attribute forall a. (MarkupM a -> MarkupM a)
+data Attribute = Attribute (MarkupM Unit -> MarkupM Unit)
 
 instance monoidSemigroup :: Semigroup Attribute where
    (<>) (Attribute f) (Attribute g) = Attribute (g <<< f)
@@ -140,17 +140,16 @@ renderString = go id
 renderMarkup :: Markup -> String
 renderMarkup markup = renderString markup ""
 
--- dataAttribute :: Tag             -- ^ Name of the attribute.
---               -> AttributeValue  -- ^ Value for the attribute.
---               -> Attribute       -- ^ Resulting HTML attribute.
--- dataAttribute (Tag tag) (AttributeValue value) = Attribute $ AddCustomAttribute
---     ("data-" <> (tag.unTag))
---     (value.unAttributeValue)
+dataAttribute :: Tag             -- ^ Name of the attribute.
+              -> AttributeValue  -- ^ Value for the attribute.
+              -> Attribute       -- ^ Resulting HTML attribute.
+dataAttribute (Tag tag) (AttributeValue value) = Attribute $ AddCustomAttribute
+    ("data-" <> (tag.unTag))
+    (value.unAttributeValue)
 
--- customAttribute :: Tag             -- ^ Name of the attribute
---                 -> AttributeValue  -- ^ Value for the attribute
---                 -> Attribute       -- ^ Resulting HTML attribtue
--- customAttribute tag value = Attribute $ AddCustomAttribute
---     (Static $ unTag tag)
---     (unAttributeValue value)
--- {-# INLINE customAttribute #-}
+customAttribute :: Tag             -- ^ Name of the attribute
+                -> AttributeValue  -- ^ Value for the attribute
+                -> Attribute       -- ^ Resulting HTML attribtue
+customAttribute (Tag tag) (AttributeValue value) = Attribute $ AddCustomAttribute
+    (tag.unTag)
+    (value.unAttributeValue)
