@@ -5,10 +5,10 @@ class ToMarkup a where
     toMarkup :: a -> Markup
 
 instance numberToMarkup :: ToMarkup Number where
-    toMarkup = Content <<< show 
+    toMarkup = Content <<< show
 
 instance stringToMarkup :: ToMarkup String where
-    toMarkup = Content <<< show 
+    toMarkup = Content <<< show
 
 data MarkupM a
     -- | Tag, open tag, end tag, content
@@ -64,7 +64,7 @@ instance monoidAttribute :: Monoid Attribute where
     mempty = Attribute id
 
 instance semigroupAttributeValue :: Semigroup AttributeValue where
-  (<>) (AttributeValue f) (AttributeValue g) = 
+  (<>) (AttributeValue f) (AttributeValue g) =
       AttributeValue {unAttributeValue : (f.unAttributeValue ++ g.unAttributeValue)}
 
 instance monoidAttributeValue :: Monoid AttributeValue where
@@ -73,7 +73,7 @@ instance monoidAttributeValue :: Monoid AttributeValue where
 data AttributeValue = AttributeValue { unAttributeValue :: String }
 
 foreign import unsafeCoerce
-  "function unsafeCoerce(a){return a}" :: forall a b. a -> b         
+  "function unsafeCoerce(a){return a}" :: forall a b. a -> b
 
 foreign import error
   "function error (msg) {return (function () {console.log(msg)})}" :: forall a. String -> a
@@ -95,33 +95,33 @@ customLeaf (Tag o) = CustomLeaf (o.unTag)
 renderString :: Markup  -- ^ Markup to render
              -> String  -- ^ String to append
              -> String  -- ^ Resulting String
-renderString = go id 
+renderString = go id
   where
     go :: forall b. (String -> String) -> MarkupM b -> String -> String
 
     go attrs (Parent _ open close content) =
-        ((++) open)   <<< 
-        attrs         <<< 
-        ((++) ">")    <<< 
-        go id content <<< 
+        ((++) open)   <<<
+        attrs         <<<
+        ((++) ">")    <<<
+        go id content <<<
         ((++) close)
 
     go attrs (CustomParent tag content) =
-        ((++) "<")    <<< 
-        ((++) tag)    <<< 
-        attrs         <<< 
-        ((++) ">")    <<< 
+        ((++) "<")    <<<
+        ((++) tag)    <<<
+        attrs         <<<
+        ((++) ">")    <<<
         go id content <<<
-        ((++) "</")   <<< 
-        ((++) tag)    <<< 
+        ((++) "</")   <<<
+        ((++) tag)    <<<
         ((++) ">")
 
     go attrs (Leaf _ begin end) = ((++) begin) <<< attrs <<< ((++) end)
 
     go attrs (CustomLeaf tag close) =
         ((++) "<") <<<  ((++) tag) <<< attrs <<<
-        (if close 
-         then ((++) " />" ) 
+        (if close
+         then ((++) " />" )
          else ((++) ">"))
 
     go attrs (AddAttribute _ key value h) = flip go h $
@@ -139,6 +139,17 @@ renderString = go id
 
 renderMarkup :: Markup -> String
 renderMarkup markup = renderString markup ""
+
+attribute :: Tag             -- ^ Raw key
+          -> Tag             -- ^ Shared key string for the HTML attribute.
+          -> AttributeValue  -- ^ Value for the HTML attribute.
+          -> Attribute       -- ^ Resulting HTML attribute.
+attribute (Tag rawKey)
+          (Tag key)
+          (AttributeValue value) = Attribute $
+              AddAttribute (rawKey.unTag)
+                           (key.unTag)
+                           (value.unAttributeValue)
 
 dataAttribute :: Tag             -- ^ Name of the attribute.
               -> AttributeValue  -- ^ Value for the attribute.
