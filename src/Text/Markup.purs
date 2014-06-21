@@ -1,5 +1,4 @@
 module Text.Markup where
-
 import Data.Monoid
 
 class ToMarkup a where
@@ -44,10 +43,10 @@ instance functorMarkupM :: Functor MarkupM  where
     (<$>) _ = unsafeCoerce
 
 instance applyMarkupM :: Apply MarkupM where
-    (<*>) f _ = (error "Text.Flame: invalid use of applicative")
+    (<*>) f _ = (error "Text.Markup: invalid use of applicative")
 
 instance bindMarkup :: Bind MarkupM where
-    (>>=) h1 f = (unsafeCoerce h1) <>  f (error "Text.Flame: invalid use of monadic bind")
+    (>>=) h1 f = (unsafeCoerce h1) <>  f (error "Text.Markup: invalid use of monadic bind")
 
 instance applicativeMarkup :: Applicative MarkupM where
     pure _ = Empty
